@@ -1,6 +1,9 @@
 const mongoose = require('mongoose');
 
 const pasteSchema = mongoose.Schema({
+    link : {
+        type: String,
+    },
     title : {
         type: String,
         required: [true, "Please add the title"],
@@ -13,8 +16,8 @@ const pasteSchema = mongoose.Schema({
         type: String,
         required: [true, "Please add the language"],
     },
-    isProtected : {
-        type: Boolean,
+    password : {
+        type: String, 
         required: [false],
     }
     },

@@ -1,38 +1,49 @@
-
-
-//@desc  Get all Pastes
-//@route GET /Pastes
-//@access public
-// const getPastes = (req, res) => {
-//     res.status(200).json("All Pastes")
-// }
+const asyncHandler = require("express-async-handler");
+const Paste = require('../models/pastemodel')
 
 //@desc  create Paste
 //@route POST /Pastes
 //@access public
-const createPaste = (req, res) => {
-    res.status(201).json("Create contact")
-}
+const createPaste = asyncHandler( async (req, res) => {
+    const { title, code, language, password } = req.body;
+    if(!password){
+        password = ""
+    }
+    const paste = await Paste.create({
+        link: "clink",
+        title,
+        code,
+        language,
+        password
+    });
+    res.status(201).json(paste)
+});
 
 //@desc  Get Paste
 //@route GET /Pastes/:id
 //@access public
-const getPaste = (req, res) => {
-    res.status(200).json(`Get single Paste for id ${req.params.id}`)
-}
+const getPaste = asyncHandler( async (req, res) => {
+    const { password } = req.body
+    const paste = await Paste.find({ link: req.params.id, password: password }).setOptions({ sanitizeFilter: true });
+    if(!paste){
+        // error
+        // password wrong ya no item with this link
+    }
+    res.status(200).json(paste)
+});
 
 //@desc  Update Paste
 //@route PUT /Pastes/:id
 //@access public
-const updatePaste = (req, res) => {
+const updatePaste = asyncHandler( async (req, res) => {
     res.status(201).json(`Update Pastes ${req.params.id}`)
-}
+});
 
 //@desc  delete Paste
 //@route DELETE /Pastes/:id
 //@access public
-const deletePaste = (req, res) => {
+const deletePaste = asyncHandler( async (req, res) => {
     res.status(200).json(`Delete Pastes ${req.params.id}`)
-}
+});
 
 module.exports = {createPaste, getPaste, updatePaste, deletePaste}
