@@ -9,7 +9,7 @@ const ObjectID = require('mongodb').ObjectId;
 //@route POST /Pastes 
 //@access public
 const createPaste = asyncHandler( async (req, res) => {
-    const { title, code, language, password } = req.body;
+    const { title, code, language, isPublic, password } = req.body;
     if(!title || !code || !language){
         res.status(400);
         throw new Error("All fields are mandatory !");
@@ -26,14 +26,29 @@ const createPaste = asyncHandler( async (req, res) => {
         title,
         code,
         language,
+        isPublic,
         password
     });
     res.status(201).json(paste)
 });
 
+//@desc  Get Public Pastes
+//@route GET /Pastes/
+//@access public
+const getPublicPastes = asyncHandler( async (req, res) => {
+    const paste = await Paste.find({ isPublic: 1 }).setOptions({ sanitizeFilter: true });
+    if(paste.length == 0){
+        // error
+        res.status(404);
+        throw new Error("Paste not Found");
+    }
+    res.status(200).json(paste)
+});
+
+
 //@desc  Get Paste
 //@route GET /Pastes/:id
-//@access public
+//@access password protected / public
 const getPaste = asyncHandler( async (req, res) => {
     const { password } = req.body
     const paste = await Paste.find({ link: req.params.id}).setOptions({ sanitizeFilter: true });
@@ -60,9 +75,9 @@ const getPaste = asyncHandler( async (req, res) => {
 
 //@desc  Update Paste
 //@route PUT /Pastes/:id
-//@access public
+//@access password protected 
 const updatePaste = asyncHandler( async (req, res) => {
-    const { title, code, language, password } = req.body
+    const { title, code, language, isPublic, password } = req.body
     const paste = await Paste.find({ link: req.params.id}).setOptions({ sanitizeFilter: true });
     if(paste.length == 0){
         // error
@@ -90,6 +105,7 @@ const updatePaste = asyncHandler( async (req, res) => {
                         title: title,
                         code: code,
                         language: language,
+                        isPublic: isPublic,
                         password: hashedpass
                     },
                     {new: true}
@@ -102,7 +118,7 @@ const updatePaste = asyncHandler( async (req, res) => {
 
 //@desc  delete Paste
 //@route DELETE /Pastes/:id
-//@access public
+//@access password protected 
 const deletePaste = asyncHandler( async (req, res) => {
     const { password } = req.body
     const paste = await Paste.find({ link: req.params.id}).setOptions({ sanitizeFilter: true });
@@ -135,4 +151,4 @@ const deletePaste = asyncHandler( async (req, res) => {
     }
 });
 
-module.exports = {createPaste, getPaste, updatePaste, deletePaste}
+module.exports = {createPaste, getPaste, getPublicPastes, updatePaste, deletePaste}

@@ -17,6 +17,10 @@ const pasteSchema = mongoose.Schema({
         type: String,
         required: [true, "Please add the language"],
     },
+    isPublic : {
+        type: Boolean,
+        required: [true, "Plaase add the visibility"],
+    },
     password : {
         type: String, 
         required: [false],

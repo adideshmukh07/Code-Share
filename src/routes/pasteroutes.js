@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { createPaste, getPaste, updatePaste, deletePaste} = require('../controllers/pasteController');
+const { createPaste, getPaste, getPublicPastes, updatePaste, deletePaste} = require('../controllers/pasteController');
 
 
 // router.route("/").get(getAnnouncements)
@@ -8,6 +8,8 @@ const { createPaste, getPaste, updatePaste, deletePaste} = require('../controlle
 router.route("/").post(createPaste)
 
 router.route("/:id").get(getPaste)
+
+router.route("/").get(getPublicPastes)
 
 router.route("/:id").put(updatePaste)
 
