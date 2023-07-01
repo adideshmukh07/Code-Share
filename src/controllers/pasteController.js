@@ -50,7 +50,7 @@ const getPublicPastes = asyncHandler( async (req, res) => {
 //@route GET /Pastes/:id
 //@access password protected / public
 const getPaste = asyncHandler( async (req, res) => {
-    const { password } = req.body
+    const password = req.query.password
     const paste = await Paste.find({ link: req.params.id}).setOptions({ sanitizeFilter: true });
     if(paste.length == 0){
         // error
