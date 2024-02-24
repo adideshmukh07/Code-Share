@@ -21,13 +21,16 @@ io.on('connection',(socket)=>{
         socket.broadcast.emit('code-update',newCode);
     })
 })
+
 app.use(cors())
 connectDb()
 const port = process.env.PORT || 4000
 
 app.use(errorHandler);
 app.use(express.json())
+
 app.use('/', require('./routes/pasteroutes'))
+app.use('/rooms', require('./routes/roomroutes'))
 
 
 server.listen(port, () => {
