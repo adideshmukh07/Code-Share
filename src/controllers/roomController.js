@@ -23,7 +23,6 @@ const createRoom = asyncHandler( async (req, res) => {
         code,
         language,
         isPublic,
-        password
     });
     res.status(201).json(room)
 });
@@ -31,15 +30,13 @@ const createRoom = asyncHandler( async (req, res) => {
 
 const getRoom = asyncHandler( async (req, res) => {
     const password = req.query.password
-    const room = await Room.find({ link: req.params.id}).setOptions({ sanitizeFilter: true });
+    let room = await Room.find({ link: req.params.id}).setOptions({ sanitizeFilter: true });
     if(room.length == 0){
         // error
         res.status(404);
         throw new Error("Room not Found");
     }
     const hashedpass = room[0]["password"]
-    console.log(password);
-    console.log(hashedpass);
     if(!hashedpass){
         res.status(200).json(room)
     }
@@ -49,7 +46,7 @@ const getRoom = asyncHandler( async (req, res) => {
                 res.status(403).json('Unauthorized')
             }
             else{
-                res.status(200).json(room)
+                res.status(200).json(room);
             }
         })
     }
@@ -58,15 +55,14 @@ const getRoom = asyncHandler( async (req, res) => {
 const updateRoom = asyncHandler( async (req, res) => {
     const { title, code, language, isPublic, password } = req.body;
     const room = await Room.find({ link: req.params.id }).setOptions({ sanitizeFilter: true });
+    // console.log(code);
     if(room.length == 0){
         // error
         res.status(404);
         throw new Error("Room not Found");
     }
     const hashedpass = room[0]["password"]
-    console.log(password);
-    console.log(hashedpass);
-    if(!hashedpass){
+    if(isPublic){
         const ID = room[0]._id;
         const updatedRoom = await Room.findByIdAndUpdate(
             ID,
