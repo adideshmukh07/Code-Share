@@ -15,10 +15,12 @@ let io = new Server(server,{
 });
 
 io.on('connection',(socket)=>{
-    console.log(socket.id);
     // continue from here 
-    socket.on('code-change',(newCode)=>{
-        socket.broadcast.emit('code-update',newCode);
+    socket.on('joinRoom',(roomID)=>{
+        socket.join(roomID);
+    })
+    socket.on('code-change',(roomID,newCode)=>{
+        socket.broadcast.to(roomID).emit('code-update',newCode);
     })
 })
 

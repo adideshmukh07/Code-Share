@@ -38,8 +38,6 @@ const getRoom = asyncHandler( async (req, res) => {
         throw new Error("Room not Found");
     }
     const hashedpass = room[0]["password"]
-    console.log(password);
-    console.log(hashedpass);
     if(!hashedpass){
         res.status(200).json(room)
     }
