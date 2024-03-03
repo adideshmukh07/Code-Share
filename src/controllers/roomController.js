@@ -38,6 +38,8 @@ const getRoom = asyncHandler( async (req, res) => {
         throw new Error("Room not Found");
     }
     const hashedpass = room[0]["password"]
+    console.log(password);
+    console.log(hashedpass);
     if(!hashedpass){
         res.status(200).json(room)
     }
@@ -53,5 +55,60 @@ const getRoom = asyncHandler( async (req, res) => {
     }
 });
 
+const updateRoom = asyncHandler( async (req, res) => {
+    const { title, code, language, isPublic, password } = req.body;
+    const room = await Room.find({ link: req.params.id }).setOptions({ sanitizeFilter: true });
+    if(room.length == 0){
+        // error
+        res.status(404);
+        throw new Error("Room not Found");
+    }
+    const hashedpass = room[0]["password"]
+    console.log(password);
+    console.log(hashedpass);
+    if(!hashedpass){
+        const ID = room[0]._id;
+        const updatedRoom = await Room.findByIdAndUpdate(
+            ID,
+            {
+                link: req.params.id,
+                title: title,
+                code: code,
+                language: language,
+                isPublic: isPublic,
+                password: hashedpass
+            },
+            { new: true }
+        );
+        res.status(200).json(updatedRoom);
+    }
+    else{
+        bcrypt.compare(password, hashedpass, async function(error, match){
+            if(error){
+                throw error
+            }
+            else if(!match){
+                res.status(403).json('Unauthorized')
+            }
+            else{
+                const ID = room[0]._id;
+                const updatedRoom = await Room.findByIdAndUpdate(
+                    ID,
+                    {
+                        link: req.params.id,
+                        title: title,
+                        code: code,
+                        language: language,
+                        isPublic: isPublic,
+                        password: hashedpass
+                    },
+                    {new: true}
+                );
+                res.status(200).json(updatedRoom);
+            }
+        })
+    }
+});
 
-module.exports = {createRoom, getRoom}
+
+module.exports = {createRoom, getRoom, updateRoom }
