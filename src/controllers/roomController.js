@@ -23,6 +23,7 @@ const createRoom = asyncHandler( async (req, res) => {
         code,
         language,
         isPublic,
+        password
     });
     res.status(201).json(room)
 });
@@ -37,6 +38,7 @@ const getRoom = asyncHandler( async (req, res) => {
         throw new Error("Room not Found");
     }
     const hashedpass = room[0]["password"]
+    console.log(room);
     if(!hashedpass){
         res.status(200).json(room)
     }
@@ -62,7 +64,7 @@ const updateRoom = asyncHandler( async (req, res) => {
         throw new Error("Room not Found");
     }
     const hashedpass = room[0]["password"]
-    if(isPublic){
+    if(!hashedpass){
         const ID = room[0]._id;
         const updatedRoom = await Room.findByIdAndUpdate(
             ID,
